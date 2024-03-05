@@ -39,13 +39,33 @@
         .function-card {
             background-color: #ff9f9b;
         }
+
+        #score {
+            font-size: 18px;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #score:hover {
+            background-color: #45a049;
+        }
+
+        #score:active {
+            background-color: #3e8e41;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Digestive Organs Matching Game- Developed by Godson</h1>
+    <h1>Digestive Organs Matching Game</h1>
 
     <div class="game-container" id="game-container"></div>
+    <button id="score">Score: 0</button>
 
     <script>
         const organs = ['Liver', 'Stomach', 'Small Intestines', 'Duodenum', 'Gall Bladder', 'Large Intestines', 'Pancreas'];
@@ -61,11 +81,13 @@
             'Pancreas': 'Produces Enzymes'
         };
 
+        let score = 0;
+        const gameContainer = document.getElementById('game-container');
+        const scoreDisplay = document.getElementById('score');
+
         // Shuffle arrays to randomize card positions
         shuffleArray(organs);
         shuffleArray(functions);
-
-        const gameContainer = document.getElementById('game-container');
 
         // Create organ cards
         organs.forEach((organ, index) => {
@@ -100,14 +122,43 @@
                 const organ = selectedOrgan.getAttribute('data-organ');
                 const func = this.getAttribute('data-function');
                 if (correctMatches[organ] === func) {
-                    alert('Correct match!');
-                    gameContainer.removeChild(selectedOrgan);
-                    gameContainer.removeChild(this);
+                    score++; // Increase score
+                    animateCorrectMatch(selectedOrgan, this); // Add animation for correct match
+                    updateScore(); // Update score display
+                    setTimeout(() => {
+                        gameContainer.removeChild(selectedOrgan);
+                        gameContainer.removeChild(this);
+                        checkGameEnd(); // Check if the game is complete
+                    }, 1000); // Delay for animation
                 } else {
-                    alert('Incorrect match. Try again!');
-                    selectedOrgan.style.backgroundColor = selectedOrgan.classList.contains('organ-card') ? '#76c7c0' : '#eee';
+                    animateIncorrectMatch(selectedOrgan, this); // Add animation for incorrect match
+                    setTimeout(() => {
+                        selectedOrgan.style.backgroundColor = selectedOrgan.classList.contains('organ-card') ? '#76c7c0' : '#eee';
+                        this.style.backgroundColor = this.classList.contains('organ-card') ? '#76c7c0' : '#eee';
+                    }, 1000); // Delay for animation
                 }
                 selectedOrgan = null;
+            }
+        }
+
+        function animateCorrectMatch(organCard, functionCard) {
+            organCard.style.backgroundColor = '#7FFF00'; // Change color to green
+            functionCard.style.backgroundColor = '#7FFF00'; // Change color to green
+        }
+
+        function animateIncorrectMatch(organCard, functionCard) {
+            organCard.style.backgroundColor = '#FF6347'; // Change color to red
+            functionCard.style.backgroundColor = '#FF6347'; // Change color to red
+        }
+
+        function updateScore() {
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
+
+        function checkGameEnd() {
+            const remainingCards = document.querySelectorAll('.organ-card, .function-card');
+            if (remainingCards.length === 0) {
+                alert(`Congratulations! You've matched all the organs with their functions. Your final score is ${score}.`);
             }
         }
 
