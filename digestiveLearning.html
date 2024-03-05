@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digestive Organs Matching Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .organ-card, .function-card {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid #fff;
+            border-radius: 8px;
+        }
+
+        .organ-card {
+            background-color: #76c7c0;
+        }
+
+        .function-card {
+            background-color: #ff9f9b;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Digestive Organs Matching Game- Developed by Godson</h1>
+
+    <div class="game-container" id="game-container"></div>
+
+    <script>
+        const organs = ['Liver', 'Stomach', 'Small Intestines', 'Duodenum', 'Gall Bladder', 'Large Intestines', 'Pancreas'];
+        const functions = ['Produces Bile', 'Breaks Down Food', 'Absorbs Nutrients', 'Receives Chyme', 'Stores Bile', 'Absorbs Water', 'Produces Enzymes'];
+
+        const correctMatches = {
+            'Liver': 'Produces Bile',
+            'Stomach': 'Breaks Down Food',
+            'Small Intestines': 'Absorbs Nutrients',
+            'Duodenum': 'Receives Chyme',
+            'Gall Bladder': 'Stores Bile',
+            'Large Intestines': 'Absorbs Water',
+            'Pancreas': 'Produces Enzymes'
+        };
+
+        // Shuffle arrays to randomize card positions
+        shuffleArray(organs);
+        shuffleArray(functions);
+
+        const gameContainer = document.getElementById('game-container');
+
+        // Create organ cards
+        organs.forEach((organ, index) => {
+            const organCard = createCard('organ-card', organ);
+            organCard.setAttribute('data-organ', organ);
+            gameContainer.appendChild(organCard);
+        });
+
+        // Create function cards
+        functions.forEach((func, index) => {
+            const functionCard = createCard('function-card', func);
+            functionCard.setAttribute('data-function', func);
+            gameContainer.appendChild(functionCard);
+        });
+
+        function createCard(className, text) {
+            const card = document.createElement('div');
+            card.className = className;
+            card.textContent = text;
+            card.addEventListener('click', cardClick);
+            return card;
+        }
+
+        let selectedOrgan = null;
+
+        function cardClick() {
+            if (!selectedOrgan) {
+                selectedOrgan = this;
+                this.style.backgroundColor = '#ccc';
+            } else {
+                // Check if the selected organ matches the selected function
+                const organ = selectedOrgan.getAttribute('data-organ');
+                const func = this.getAttribute('data-function');
+                if (correctMatches[organ] === func) {
+                    alert('Correct match!');
+                    gameContainer.removeChild(selectedOrgan);
+                    gameContainer.removeChild(this);
+                } else {
+                    alert('Incorrect match. Try again!');
+                    selectedOrgan.style.backgroundColor = selectedOrgan.classList.contains('organ-card') ? '#76c7c0' : '#eee';
+                }
+                selectedOrgan = null;
+            }
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+    </script>
+
+</body>
+</html>
